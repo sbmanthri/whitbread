@@ -1,9 +1,13 @@
 package api;
 
+import com.test.Configuration;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.http.ContentType;
-import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -11,9 +15,6 @@ import java.util.Random;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
-
-import org.junit.Before;
-import org.junit.Test;
 
 public class TestApi {
 
@@ -31,7 +32,6 @@ public class TestApi {
 
     private ResponseSpecification assertPutResponse() {
         ResponseSpecBuilder builder = new ResponseSpecBuilder();
-
         builder.expectBody("statusCode",equalTo(200));
         builder.expectBody("body.customerId", equalTo(customer.get("email")));
         builder.expectBody("body.success", equalTo(true));
@@ -50,14 +50,14 @@ public class TestApi {
     @Test
     public void addCustomer(){
 
-
         given().log().all()
                 .contentType("application/json")
                 .body(customer)
-                .when().post("https://ipw5pjxxsh.execute-api.eu-west-1.amazonaws.com/api/hotel/customer").then()
+                .when().post(Configuration.get("URL")).then()
                 .statusCode(200)
-                .contentType(ContentType.JSON)
-                .spec(assertPutResponse());
+                .contentType(ContentType.JSON);
+//                .spec(assertPutResponse());
+
 
     }
 
@@ -68,13 +68,13 @@ public class TestApi {
                 .when()
                 .contentType("application/json")
                 .body(customer)
-                .post("https://ipw5pjxxsh.execute-api.eu-west-1.amazonaws.com/api/hotel/customer")
+                .post(Configuration.get("URL"))
                 .then().log().all()
                 .statusCode(200);
 
         given()
                 .when()
-                .get("https://ipw5pjxxsh.execute-api.eu-west-1.amazonaws.com/api/hotel/customer/test@gmail.com"+customer.get("email"))
+                .get(Configuration.get("URL")+ customer.get("email"))
                 .then().log().all()
                 .statusCode(200)
                 .spec(assertGetResponse());
@@ -83,11 +83,10 @@ public class TestApi {
 
 
     @Test
-    public void DeleteCustomer() {
-
+    public void DeleteCustomer() throws URISyntaxException {
         given()
                 .when()
-                .delete("https://ipw5pjxxsh.execute-api.eu-west-1.amazonaws.com/api/hotel/customer/test@gmail.com"+customer.get("email"))
+                .delete(Configuration.get("URL")+ customer.get("email"))
                 .then()
                 .statusCode(200)
                 .body("deleted", equalTo(true));
