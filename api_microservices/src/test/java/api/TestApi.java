@@ -46,9 +46,8 @@ public class TestApi {
         return builder.build();
     }
 
-
-    @Test
-    public void addCustomer(){
+     @Test
+    public void addCustomerWith200(){
 
         given().log().all()
                 .contentType("application/json")
@@ -56,10 +55,72 @@ public class TestApi {
                 .when().post(Configuration.get("URL")).then()
                 .statusCode(200)
                 .contentType(ContentType.JSON);
-//                .spec(assertPutResponse());
-
 
     }
+
+    @Test
+    public void addCustomerVerifyResponse(){
+
+        given().log().all()
+                .contentType("application/json")
+                .body(customer)
+                .when().post(Configuration.get("URL")).then()
+                .statusCode(200)
+                .contentType(ContentType.JSON);
+ // Failing due to email not having @ symbol in response       
+                .spec(assertPutResponse());
+
+    }
+    
+       @Test
+    public void addCustomerWithoutFName(){
+      Random ran = new Random();
+        given().log().all()
+                .contentType("application/json")
+                .parametres("email","dyt"+ran.nextInt()+"@gmail.com")
+                .parametres("lastName","Miller1")
+                .parameters("title","Mr")
+                .when().post(Configuration.get("URL")).then()
+                .statusCode(400);
+           }
+
+    
+        @Test
+    public void addCustomerWithoutSName(){
+       Random ran = new Random();
+        given().log().all()
+                .contentType("application/json")
+                .parametres("email","dyt"+ran.nextInt()+"@gmail.com")
+                .parametres("firstName","david1")
+                .parameters("title","Mr")
+                .when().post(Configuration.get("URL")).then()
+                .statusCode(400);
+           }
+    
+     @Test
+    public void addCustomerWithoutEmail(){
+        given().log().all()
+                .contentType("application/json")
+                .parametres("firstName","david1")
+                .parametres("lastName","Miller1")
+                .parameters("title","Mr")
+                .when().post(Configuration.get("URL")).then()
+                .statusCode(400);
+           }
+
+    
+            @Test
+    public void addCustomerWithoutTitle(){
+       Random ran = new Random();
+        given().log().all()
+                .contentType("application/json")
+                .parametres("email","dyt"+ran.nextInt()+"@gmail.com")
+                .parametres("firstName","david1")
+                .parametres("lastName","Miller1")
+                .parametres("email","david1234@test.com")
+                .when().post(Configuration.get("URL")).then()
+                .statusCode(200);
+           }
 
     @Test
     public void GetCustomer() {
@@ -80,9 +141,8 @@ public class TestApi {
                 .spec(assertGetResponse());
 
     }
-
-
-    @Test
+    
+     @Test
     public void DeleteCustomer() throws URISyntaxException {
         given()
                 .when()
@@ -90,8 +150,26 @@ public class TestApi {
                 .then()
                 .statusCode(200)
                 .body("deleted", equalTo(true));
+      
+    }
+
+
+    @Test
+    public void verifyCustomerCustomer() throws URISyntaxException {
+        given()
+                .when()
+                .delete(Configuration.get("URL")+ customer.get("email"))
+                .then()
+                .statusCode(200)
+                .body("deleted", equalTo(true));
+        given()
+                .when()
+                .get(Configuration.get("URL")+ customer.get("email"))
+                .then().log().all()
+                .statusCode(400)
 
     }
+    
 
 }
 
