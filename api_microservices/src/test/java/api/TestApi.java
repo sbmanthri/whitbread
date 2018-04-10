@@ -71,6 +71,19 @@ public class TestApi {
                 .spec(assertPutResponse());
 
     }
+  
+    //Bug as returning 200 no eamil validation
+     @Test
+    public void addCustomerWithInvalidEmail(){
+        given().log().all()
+                .contentType("application/json")
+                 .parametres("email","david1234test.com")
+                .parametres("firstName","david1")
+                .parametres("lastName","Miller1")
+                .parameters("title","Mr")
+                .when().post(Configuration.get("URL")).then()
+                .statusCode(400);
+           }
     
        @Test
     public void addCustomerWithoutFName(){
@@ -108,7 +121,7 @@ public class TestApi {
                 .statusCode(400);
            }
 
-    
+    //Bug title is returning as mandatory field though it is specified as optional
             @Test
     public void addCustomerWithoutTitle(){
        Random ran = new Random();
@@ -117,7 +130,6 @@ public class TestApi {
                 .parametres("email","dyt"+ran.nextInt()+"@gmail.com")
                 .parametres("firstName","david1")
                 .parametres("lastName","Miller1")
-                .parametres("email","david1234@test.com")
                 .when().post(Configuration.get("URL")).then()
                 .statusCode(200);
            }
@@ -141,7 +153,7 @@ public class TestApi {
                 .spec(assertGetResponse());
 
     }
-    
+ //Success   
      @Test
     public void DeleteCustomer() throws URISyntaxException {
         given()
@@ -153,9 +165,9 @@ public class TestApi {
       
     }
 
-
+// Bug gets 200 when retrieving deleted user
     @Test
-    public void verifyCustomerCustomer() throws URISyntaxException {
+    public void verifyDeletedCustomer() throws URISyntaxException {
         given()
                 .when()
                 .delete(Configuration.get("URL")+ customer.get("email"))
