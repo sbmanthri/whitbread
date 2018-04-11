@@ -19,6 +19,12 @@ import static org.hamcrest.Matchers.notNullValue;
 public class TestApi {
 
     private static Map<String, String> customer = new HashMap<String, String>();
+      private static Map<String, String> missingTitle = new HashMap<String, String>();
+          private static Map<String, String> invalidEmail = new HashMap<String, String>();
+     private static Map<String, String> noFname = new HashMap<String, String>();
+     private static Map<String, String> noLname = new HashMap<String, String>();
+      private static Map<String, String> missingEmail = new HashMap<String, String>();
+    
 
     @Before
     public void createData(){
@@ -28,6 +34,45 @@ public class TestApi {
         customer.put("lastName", "Allen"+ran.nextInt());
         customer.put("password", "a2q4y4Qu");
         customer.put("title", "Mr");
+    }
+      @Before
+    public void dataMissingFname(){
+        Random ran = new Random();
+        cnoFnamer.put("email", "dyt"+ran.nextInt()+"@gmail.com");
+         noFname.put("lastName", "Allen"+ran.nextInt());
+        noFname.put("password", "a2q4y4Qu");
+        noFname.put("title", "Mr");
+    }
+    ublic void dataMissingLname(){
+        Random ran = new Random();
+         noLname.put("email", "dyt"+ran.nextInt()+"@gmail.com");
+         noLname.put("lastName", "Allen"+ran.nextInt());
+         noLname.put("password", "a2q4y4Qu");
+         noLname.put("title", "Mr");
+    }
+    
+     @Before
+    public void invalidEmailData()
+       invalidEmail.put("email", "dyt123gmail.com");
+        invalidEmail.put("firstName", "David"+ran.nextInt());
+        invalidEmail.put("lastName", "Allen"+ran.nextInt());
+        invalidEmail.put("password", "a2q4y4Qu");
+       invalidEmail.put("title", "Mr");
+    }
+
+@Before
+    public void missingEmailData()
+       missingEmail.put("firstName", "David"+ran.nextInt());
+        missingEmail.put("lastName", "Allen"+ran.nextInt());
+        missingEmail.put("password", "a2q4y4Qu");
+      missingEmail.put("title", "Mr");
+    }
+    @Before
+    public void missingTitle(){
+         missingTitle.put("email":"david123@sfsf.fr");
+         missingTitle.put("password":"Qwr24234");
+         missingTitle.put("firstName":"David");
+         missingTitle.put("lastName":"Allan");
     }
 
     private ResponseSpecification assertPutResponse() {
@@ -77,10 +122,7 @@ public class TestApi {
     public void addCustomerWithInvalidEmail(){
         given().log().all()
                 .contentType("application/json")
-                 .parametres("email","david1234test.com")
-                .parametres("firstName","david1")
-                .parametres("lastName","Miller1")
-                .parameters("title","Mr")
+                 .body(invalidEmailData)
                 .when().post(Configuration.get("URL")).then()
                 .statusCode(400);
            }
@@ -90,9 +132,7 @@ public class TestApi {
       Random ran = new Random();
         given().log().all()
                 .contentType("application/json")
-                .parametres("email","dyt"+ran.nextInt()+"@gmail.com")
-                .parametres("lastName","Miller1")
-                .parameters("title","Mr")
+                .body(noFname)
                 .when().post(Configuration.get("URL")).then()
                 .statusCode(400);
            }
@@ -103,9 +143,7 @@ public class TestApi {
        Random ran = new Random();
         given().log().all()
                 .contentType("application/json")
-                .parametres("email","dyt"+ran.nextInt()+"@gmail.com")
-                .parametres("firstName","david1")
-                .parameters("title","Mr")
+                .body( noLname)
                 .when().post(Configuration.get("URL")).then()
                 .statusCode(400);
            }
@@ -114,9 +152,7 @@ public class TestApi {
     public void addCustomerWithoutEmail(){
         given().log().all()
                 .contentType("application/json")
-                .parametres("firstName","david1")
-                .parametres("lastName","Miller1")
-                .parameters("title","Mr")
+                .body(missingEmail)
                 .when().post(Configuration.get("URL")).then()
                 .statusCode(400);
            }
@@ -125,12 +161,10 @@ public class TestApi {
    // "errorMessage": "Error! Database insertion crashed, looks like we have a bug here", 
             @Test
     public void addCustomerWithoutTitle(){
-       Random ran = new Random();
+
         given().log().all()
                 .contentType("application/json")
-                .parametres("email","dyt"+ran.nextInt()+"@gmail.com")
-                .parametres("firstName","david1")
-                .parametres("lastName","Miller1")
+                .body(missingTitle),
                 .when().post(Configuration.get("URL")).then()
                 .statusCode(200);
            }
