@@ -38,12 +38,13 @@ public class TestApi {
       @Before
     public void dataMissingFname(){
         Random ran = new Random();
-        cnoFnamer.put("email", "dyt"+ran.nextInt()+"@gmail.com");
+        noFname.put("email", "dyt"+ran.nextInt()+"@gmail.com");
          noFname.put("lastName", "Allen"+ran.nextInt());
         noFname.put("password", "a2q4y4Qu");
         noFname.put("title", "Mr");
     }
-    ublic void dataMissingLname(){
+        @Before
+    public void dataMissingLname(){
         Random ran = new Random();
          noLname.put("email", "dyt"+ran.nextInt()+"@gmail.com");
          noLname.put("lastName", "Allen"+ran.nextInt());
@@ -52,7 +53,8 @@ public class TestApi {
     }
     
      @Before
-    public void invalidEmailData()
+    public void invalidEmailData(){
+        Random ran = new Random();
        invalidEmail.put("email", "dyt123gmail.com");
         invalidEmail.put("firstName", "David"+ran.nextInt());
         invalidEmail.put("lastName", "Allen"+ran.nextInt());
@@ -61,7 +63,8 @@ public class TestApi {
     }
 
 @Before
-    public void missingEmailData()
+    public void missingEmailData(){
+        Random ran = new Random();
        missingEmail.put("firstName", "David"+ran.nextInt());
         missingEmail.put("lastName", "Allen"+ran.nextInt());
         missingEmail.put("password", "a2q4y4Qu");
@@ -69,10 +72,10 @@ public class TestApi {
     }
     @Before
     public void missingTitle(){
-         missingTitle.put("email":"david123@sfsf.fr");
-         missingTitle.put("password":"Qwr24234");
-         missingTitle.put("firstName":"David");
-         missingTitle.put("lastName":"Allan");
+         missingTitle.put("email","david123@sfsf.fr");
+         missingTitle.put("password","Qwr24234");
+         missingTitle.put("firstName","David");
+         missingTitle.put("lastName","Allan");
     }
 
     private ResponseSpecification assertPutResponse() {
@@ -112,7 +115,7 @@ public class TestApi {
                 .body(customer)
                 .when().post(Configuration.get("URL")).then()
                 .statusCode(200)
-                .contentType(ContentType.JSON);
+                .contentType(ContentType.JSON)
                 .spec(assertPutResponse());
 
     }
@@ -122,7 +125,7 @@ public class TestApi {
     public void addCustomerWithInvalidEmail(){
         given().log().all()
                 .contentType("application/json")
-                 .body(invalidEmailData)
+                 .body(invalidEmail)
                 .when().post(Configuration.get("URL")).then()
                 .statusCode(400);
            }
@@ -164,7 +167,7 @@ public class TestApi {
 
         given().log().all()
                 .contentType("application/json")
-                .body(missingTitle),
+                .body(missingTitle)
                 .when().post(Configuration.get("URL")).then()
                 .statusCode(200);
            }
@@ -213,7 +216,7 @@ public class TestApi {
                 .when()
                 .get(Configuration.get("URL")+ customer.get("email"))
                 .then().log().all()
-                .statusCode(400)
+                .statusCode(400);
 
     }
     
